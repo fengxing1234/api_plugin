@@ -1,7 +1,9 @@
 
+library api_plugin;
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+export 'package:api_plugin/dio/dio_manager.dart';
 
 class ApiPlugin {
   static const MethodChannel _channel =

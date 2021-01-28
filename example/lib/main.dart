@@ -1,3 +1,5 @@
+import 'package:api_plugin/dio/base_model/error_model.dart';
+import 'package:api_plugin/dio/dio_manager.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -24,6 +26,12 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
+    DioManager().request(DIOMethod.GET, 'chapters/json ', params: null,
+        success: (data) {
+      print(data.toString());
+      text = data.toString();
+      setState(() {});
+    }, error: (message) {});
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -36,11 +44,12 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-
     setState(() {
       _platformVersion = platformVersion;
     });
   }
+
+  String text = '1';
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +58,46 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Container(
+          padding: EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              FlatButton(
+                child: Text('get请求测试'),
+                color: Colors.blue,
+                onPressed: () {
+                  print('11');
+                  DioManager().request(DIOMethod.GET, 'wxarticle/chapters',
+                      params: null, success: (data) {
+                    print(data.toString());
+                    text = data.toString();
+                    setState(() {});
+                  }, error: (message) {
+                    print(message);
+                  });
+                },
+              ),
+              FlatButton(
+                child: Text('post请求测试'),
+                color: Colors.blue,
+                onPressed: () {
+                  DioManager().request(DIOMethod.POST, 'lg/collect/1165',
+                      params: null, success: (data) {
+                    print(data.toString());
+                    text = data.toString();
+                    if (data == null) text = '收藏成功';
+                    setState(() {});
+                  }, error: (message) {
+                    print(message);
+                    ErrorModel e = message;
+                    text = e.message;
+                    setState(() {});
+                  });
+                },
+              ),
+              Text(text),
+            ],
+          ),
         ),
       ),
     );
