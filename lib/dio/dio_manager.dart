@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import 'base_model/base_model.dart';
 import 'base_model/error_model.dart';
 import 'dio_api.dart';
 
 enum DIOMethod { GET, POST, DELETE, PUT }
-
+Map<String, dynamic> parseData(String data) {
+  return json.decode(data) as Map<String, dynamic>;
+}
 const NWMethodValues = {
   DIOMethod.GET: "get",
   DIOMethod.POST: "post",
@@ -22,15 +27,25 @@ class DioManager {
   DioManager._internal() {
     if (dio == null) {
       BaseOptions options = BaseOptions(
-        baseUrl: DioApi.baseApi,
-        contentType: Headers.jsonContentType,
-        responseType: ResponseType.json,
-        receiveDataWhenStatusError: false,
-        connectTimeout: 30000,
+        baseUrl: DioApi.baseApi1,
+        headers: getHeaders(),
+        responseType: ResponseType.plain,
+        connectTimeout: 90000,
         receiveTimeout: 3000,
       );
       dio = Dio(options);
     }
+  }
+
+  getHeaders() {
+    return {
+      "FromData": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
+      "Multipart": '"multipart/form-data',
+      "callSource": "mobile",
+      "server": "mobile",
+      "Authorization": "BackType eyJhbGciOiJIUzI1NiJ9.eyJhcHBseU1pY3JvU2VydmljZUNvZGUiOiIwMTAxNTAyMSIsImV4cCI6NDA3MDg4MDAwMDAwMH0.dUPVitXfv-iNFxNGzTtsS6wcWWJZh3SnjoB4xJMRb6s",
+    };
   }
 
   // 请求，返回参数为data
@@ -41,15 +56,18 @@ class DioManager {
   // error：请求失败回调
   //todo 玩安卓默认添加'/json'
   Future request(DIOMethod method, String path,
-      {Map<String, String> params, Function success, Function error}) async {
+      {Map<String, dynamic> params, Function success, Function error}) async {
     try {
-      Response response = await dio.request(path + '',
-          queryParameters: params,
+      Response response = await dio.request(path,
+//          queryParameters: params,
+          data: params,
           options: Options(
-              method: NWMethodValues[method],
-              ));
+            method: NWMethodValues[method],
+          ));
       if (response != null) {
-        BaseModel entity = BaseModel.fromJson(response.data);
+        final Map<String, dynamic> dataNew  =  await compute(parseData, response.data.toString());
+        BaseModel entity = BaseModel.fromJson(dataNew);
+
         if (entity.errorCode == 0) {
           success(entity.data);
         } else {
@@ -61,6 +79,41 @@ class DioManager {
     } on DioError catch (e) {
       error(createErrorEntity(e));
     }
+  }
+
+  ///手机中的图片
+  String localImagePath = "";
+
+  ///上传的服务器地址
+  String netUploadUrl = "";
+
+  ///dio 实现文件上传
+  Future fileUpload() async {
+    ///创建Dio
+    Dio dio = new Dio();
+
+    Map<String, dynamic> map = Map();
+    map["auth"] = "12345";
+    map["file"] =
+        await MultipartFile.fromFile(localImagePath, filename: "xxx23.png");
+
+    ///通过FormData
+    FormData formData = FormData.fromMap(map);
+
+    ///发送post
+    Response response = await dio.post(
+      netUploadUrl, data: formData,
+
+      ///这里是发送请求回调函数
+      ///[progress] 当前的进度
+      ///[total] 总进度
+      onSendProgress: (int progress, int total) {
+        print("当前进度是 $progress 总进度是 $total");
+      },
+    );
+
+    ///服务器响应结果
+    var data = response.data;
   }
 
   // 错误信息
