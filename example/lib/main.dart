@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
                 color: Colors.blue,
                 onPressed: () {
                   print('11');
-                  DioManager().request(DIOMethod.GET, 'wxarticle/chapters/json',
+                  DioManager.getInstance(baseUrl: 'https://wanandroid.com/').request(DIOMethod.GET, 'wxarticle/chapters/json',
                       params: null, success: (data) {
                     print(data.toString());
                     text = data.toString();
@@ -75,44 +75,24 @@ class _MyAppState extends State<MyApp> {
                 child: Text('post请求测试'),
                 color: Colors.blue,
                 onPressed: () {
-                  DioManager().request(DIOMethod.POST, 'lg/collect/1165',
-                      params: null, success: (data) {
-                    print(data.toString());
-                    text = data.toString();
-                    if (data == null) text = '收藏成功';
-                    setState(() {});
-                  }, error: (message) {
-                    print(message);
-                    ErrorModel e = message;
-                    text = e.message;
-                    setState(() {});
-                  });
+                 text = '11';
+                 setState(() {
+
+                 });
                 },
               ),
               FlatButton(
                 child: Text('应用层地址请求测试'),
                 color: Colors.blue,
                 onPressed: () {
-                  DioManager().request(DIOMethod.POST, 'taskListApi/selectTask',
-                      params: {
-                        "requestBody": {
-                          "node_id": "500",
-                          "riskcode": "D*",
-                          "pageno": "1",
-                          "pagesize": "20",
-                          "state": "5"
-                        }
-                      }, success: (data) {
-                    print(data.toString());
-                    text = data.toString();
-                    if (data == null) text = '请求成功';
-                    setState(() {});
-                  }, error: (message) {
-                    print(message);
-                    ErrorModel e = message;
-                    text = e.message;
-                    setState(() {});
-                  });
+                  DioManager().request(DIOMethod.GET, 'wxarticle/chapters/json',
+                      params: null, success: (data) {
+                        print(data.toString());
+                        text = data.toString();
+                        setState(() {});
+                      }, error: (message) {
+                        print(message);
+                      });
                 },
               ),
               FlatButton(

@@ -27,8 +27,6 @@ class DioManager {
   DioManager._internal() {
     if (dio == null) {
       BaseOptions options = BaseOptions(
-        baseUrl: DioApi.baseApi1,
-        headers: getHeaders(),
         responseType: ResponseType.plain,
         connectTimeout: 90000,
         receiveTimeout: 3000,
@@ -36,7 +34,23 @@ class DioManager {
       dio = Dio(options);
     }
   }
+  static DioManager getInstance({String baseUrl,Map headers}) {
 
+      return _shared._baseUrl(baseUrl,headers);
+  }
+
+  //用于指定特定域名，比如cdn和kline首次的http请求
+  DioManager _baseUrl(String baseUrl,Map headers) {
+    if (dio != null) {
+      if(baseUrl != null){
+        dio.options.baseUrl = baseUrl;
+      }
+      if(headers != null){
+        dio.options.headers = headers;
+      }
+    }
+    return this;
+  }
   getHeaders() {
     return {
       "FromData": "application/x-www-form-urlencoded",
