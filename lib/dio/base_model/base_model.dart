@@ -1,5 +1,5 @@
 class BaseModel {
-  String errorCode;
+  dynamic errorCode;
   dynamic data;
   String errorMsg;
 

@@ -95,12 +95,20 @@ class DioManager {
         final Map<String, dynamic> dataNew =
             await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
-
-        if (entity.errorCode == '200') {
-          success(entity.data);
-        } else {
-          error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
+        if(entity.errorCode is String ){
+          if (entity.errorCode == '200') {
+            success(entity.data);
+          } else {
+            error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
+          }
+        }else{
+          if (entity.errorCode == 200) {
+            success(entity.data);
+          } else {
+            error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
+          }
         }
+
       } else {
         error(ErrorModel(code: "-1", message: "未知错误"));
       }
