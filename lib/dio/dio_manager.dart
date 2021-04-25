@@ -96,13 +96,13 @@ class DioManager {
             await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
 
-        if (entity.errorCode == 200) {
+        if (entity.errorCode == '200') {
           success(entity.data);
         } else {
           error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
         }
       } else {
-        error(ErrorModel(code: -1, message: "未知错误"));
+        error(ErrorModel(code: "-1", message: "未知错误"));
       }
     } on DioError catch (e) {
       error(createErrorEntity(e));
@@ -149,22 +149,22 @@ class DioManager {
     switch (error.type) {
       case DioErrorType.CANCEL:
         {
-          return ErrorModel(code: -1, message: "请求取消");
+          return ErrorModel(code: "-1", message: "请求取消");
         }
         break;
       case DioErrorType.CONNECT_TIMEOUT:
         {
-          return ErrorModel(code: -1, message: "连接超时");
+          return ErrorModel(code: "-1", message: "连接超时");
         }
         break;
       case DioErrorType.SEND_TIMEOUT:
         {
-          return ErrorModel(code: -1, message: "请求超时");
+          return ErrorModel(code: "-1", message: "请求超时");
         }
         break;
       case DioErrorType.RECEIVE_TIMEOUT:
         {
-          return ErrorModel(code: -1, message: "响应超时");
+          return ErrorModel(code: "-1", message: "响应超时");
         }
         break;
       case DioErrorType.RESPONSE:
@@ -172,15 +172,15 @@ class DioManager {
           try {
             int errCode = error.response.statusCode;
             String errMsg = error.response.statusMessage;
-            return ErrorModel(code: errCode, message: errMsg);
+            return ErrorModel(code: errCode.toString(), message: errMsg);
           } on Exception catch (_) {
-            return ErrorModel(code: -1, message: "未知错误");
+            return ErrorModel(code: "-1", message: "未知错误");
           }
         }
         break;
       default:
         {
-          return ErrorModel(code: -1, message: error.message);
+          return ErrorModel(code: "-1", message: error.message);
         }
     }
   }
