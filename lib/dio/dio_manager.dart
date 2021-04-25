@@ -83,10 +83,10 @@ class DioManager {
   // error：请求失败回调
   //todo 玩安卓默认添加'/json'
   Future request(DIOMethod method, String path,
-      {Map<String, dynamic> params, Function success, Function error}) async {
+      {Map<String, dynamic> params,Map<String, dynamic> queryParams, Function success, Function error}) async {
     try {
       Response response = await dio.request(path,
-          queryParameters: params,
+          queryParameters: queryParams,
           data: params,
           options: Options(
             method: NWMethodValues[method],
