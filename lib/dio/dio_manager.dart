@@ -27,8 +27,6 @@ class DioManager {
   DioManager._internal() {
     if (dio == null) {
       BaseOptions options = BaseOptions(
-        baseUrl: DioApi.baseApi1,
-        headers: getHeaders(),
         responseType: ResponseType.plain,
         connectTimeout: 90000,
         receiveTimeout: 3000,
@@ -36,7 +34,23 @@ class DioManager {
       dio = Dio(options);
     }
   }
+  static DioManager getInstance({String baseUrl,Map headers}) {
 
+      return _shared._baseUrl(baseUrl,headers);
+  }
+
+  //用于指定特定域名，比如cdn和kline首次的http请求
+  DioManager _baseUrl(String baseUrl,Map headers) {
+    if (dio != null) {
+      if(baseUrl != null){
+        dio.options.baseUrl = baseUrl;
+      }
+      if(headers != null){
+        dio.options.headers = headers;
+      }
+    }
+    return this;
+  }
   getHeaders() {
     return {
       "FromData": "application/x-www-form-urlencoded",
@@ -68,13 +82,13 @@ class DioManager {
         final Map<String, dynamic> dataNew  =  await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
 
-        if (entity.state == 0) {
+        if (entity.errorCode == 0) {
           success(entity.data);
         } else {
-          error(ErrorModel(state: entity.state, msg: entity.msg));
+          error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
         }
       } else {
-        error(ErrorModel(state: -1, msg: "未知错误"));
+        error(ErrorModel(code: -1, message: "未知错误"));
       }
     } on DioError catch (e) {
       error(createErrorEntity(e));
@@ -121,22 +135,22 @@ class DioManager {
     switch (error.type) {
       case DioErrorType.CANCEL:
         {
-          return ErrorModel(state: -1, msg: "请求取消");
+          return ErrorModel(code: -1, message: "请求取消");
         }
         break;
       case DioErrorType.CONNECT_TIMEOUT:
         {
-          return ErrorModel(state: -1, msg: "连接超时");
+          return ErrorModel(code: -1, message: "连接超时");
         }
         break;
       case DioErrorType.SEND_TIMEOUT:
         {
-          return ErrorModel(state: -1, msg: "请求超时");
+          return ErrorModel(code: -1, message: "请求超时");
         }
         break;
       case DioErrorType.RECEIVE_TIMEOUT:
         {
-          return ErrorModel(state: -1, msg: "响应超时");
+          return ErrorModel(code: -1, message: "响应超时");
         }
         break;
       case DioErrorType.RESPONSE:
@@ -144,15 +158,15 @@ class DioManager {
           try {
             int errCode = error.response.statusCode;
             String errMsg = error.response.statusMessage;
-            return ErrorModel(state: errCode, msg: errMsg);
+            return ErrorModel(code: errCode, message: errMsg);
           } on Exception catch (_) {
-            return ErrorModel(state: -1, msg: "未知错误");
+            return ErrorModel(code: -1, message: "未知错误");
           }
         }
         break;
       default:
         {
-          return ErrorModel(state: -1, msg: error.message);
+          return ErrorModel(code: -1, message: error.message);
         }
     }
   }
