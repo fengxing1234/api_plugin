@@ -96,7 +96,7 @@ class DioManager {
             await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
 
-        if (entity.errorCode == 0) {
+        if (entity.errorCode == 200) {
           success(entity.data);
         } else {
           error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
