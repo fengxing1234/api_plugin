@@ -2,7 +2,7 @@
 
 
 class ErrorModel {
-  int code;
-  String message;
-  ErrorModel({this.code, this.message});
+  int state;
+  String msg;
+  ErrorModel({this.state, this.msg});
 }

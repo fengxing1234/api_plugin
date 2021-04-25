@@ -1,13 +1,13 @@
 class BaseModel {
-  int errorCode;
+  int state;
   dynamic data;
-  String errorMsg;
+  String msg;
 
-  BaseModel({this.errorCode, this.data, this.errorMsg});
+  BaseModel({this.state, this.data, this.msg});
 
   BaseModel.fromJson(Map<String, dynamic> json) {
-    errorCode = json['errorCode'];
+    state = json['state'];
     data = json['data'];
-    errorMsg = json['errorMsg'];
+    msg = json['msg'];
   }
 }
