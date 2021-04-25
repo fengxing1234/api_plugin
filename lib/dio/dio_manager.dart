@@ -10,9 +10,11 @@ import 'base_model/error_model.dart';
 import 'dio_api.dart';
 
 enum DIOMethod { GET, POST, DELETE, PUT }
+
 Map<String, dynamic> parseData(String data) {
   return json.decode(data) as Map<String, dynamic>;
 }
+
 const NWMethodValues = {
   DIOMethod.GET: "get",
   DIOMethod.POST: "post",
@@ -41,26 +43,26 @@ class DioManager {
           return true;
         };
       };
-
     }
   }
-  static DioManager getInstance({String baseUrl,Map headers}) {
 
-      return _shared._baseUrl(baseUrl,headers);
+  static DioManager getInstance({String baseUrl, Map headers}) {
+    return _shared._baseUrl(baseUrl, headers);
   }
 
   //用于指定特定域名，比如cdn和kline首次的http请求
-  DioManager _baseUrl(String baseUrl,Map headers) {
+  DioManager _baseUrl(String baseUrl, Map headers) {
     if (dio != null) {
-      if(baseUrl != null){
+      if (baseUrl != null) {
         dio.options.baseUrl = baseUrl;
       }
-      if(headers != null){
+      if (headers != null) {
         dio.options.headers = headers;
       }
     }
     return this;
   }
+
   getHeaders() {
     return {
       "FromData": "application/x-www-form-urlencoded",
@@ -68,7 +70,8 @@ class DioManager {
       "Multipart": '"multipart/form-data',
       "callSource": "mobile",
       "server": "mobile",
-      "Authorization": "BackType eyJhbGciOiJIUzI1NiJ9.eyJhcHBseU1pY3JvU2VydmljZUNvZGUiOiIwMTAxNTAyMSIsImV4cCI6NDA3MDg4MDAwMDAwMH0.dUPVitXfv-iNFxNGzTtsS6wcWWJZh3SnjoB4xJMRb6s",
+      "Authorization":
+          "BackType eyJhbGciOiJIUzI1NiJ9.eyJhcHBseU1pY3JvU2VydmljZUNvZGUiOiIwMTAxNTAyMSIsImV4cCI6NDA3MDg4MDAwMDAwMH0.dUPVitXfv-iNFxNGzTtsS6wcWWJZh3SnjoB4xJMRb6s",
     };
   }
 
@@ -83,13 +86,14 @@ class DioManager {
       {Map<String, dynamic> params, Function success, Function error}) async {
     try {
       Response response = await dio.request(path,
-//          queryParameters: params,
+          queryParameters: params,
           data: params,
           options: Options(
             method: NWMethodValues[method],
           ));
       if (response != null) {
-        final Map<String, dynamic> dataNew  =  await compute(parseData, response.data.toString());
+        final Map<String, dynamic> dataNew =
+            await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
 
         if (entity.errorCode == 0) {
