@@ -105,7 +105,7 @@ class DioManager {
           if (entity.errorCode == 200) {
             success(entity.data);
           } else {
-            error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
+            error(ErrorModel(code: entity.errorCode.toString(), message: entity.errorMsg));
           }
         }
 
