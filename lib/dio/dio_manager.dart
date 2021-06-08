@@ -33,7 +33,7 @@ class DioManager {
       BaseOptions options = BaseOptions(
         responseType: ResponseType.plain,
         connectTimeout: 90000,
-        receiveTimeout: 3000,
+        receiveTimeout: 6000,
       );
       dio = Dio(options);
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
