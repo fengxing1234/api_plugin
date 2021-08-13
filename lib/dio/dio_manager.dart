@@ -96,13 +96,13 @@ class DioManager {
             await compute(parseData, response.data.toString());
         BaseModel entity = BaseModel.fromJson(dataNew);
         if(entity.errorCode is String ){
-          if (entity.errorCode == '200') {
+          if (entity.errorCode == '200' || entity.errorCode == '204') {
             success(entity.data);
           } else {
             error(ErrorModel(code: entity.errorCode, message: entity.errorMsg));
           }
         }else{
-          if (entity.errorCode == 200) {
+          if (entity.errorCode == 200|| entity.errorCode == 204) {
             success(entity.data);
           } else {
             error(ErrorModel(code: entity.errorCode.toString(), message: entity.errorMsg));
